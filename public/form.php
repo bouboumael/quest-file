@@ -1,12 +1,18 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST')
-{
-    $uploadDir = 'public/uploads/';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $uploadFile = $uploadDir . $_FILES['avatar']['name'];
-    
-    var_dump($_FILES, $uploadFile);
+    if ($_FILES['avatar']['tmp_name'] !== '') {
+        $extensionsAuthorized = ['jpg', 'jpeg', 'png', 'webp'];
+        $extension = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
+        $maxFileSize = 1000000;
+
+        $uploadDir = 'public/uploads/';
+
+        $uploadFile = $uploadDir . uniqid() . '_' . basename($_FILES['avatar']['name']);
+
+        var_dump($_FILES, $uploadFile);
+    }
 }
 
 ?>
