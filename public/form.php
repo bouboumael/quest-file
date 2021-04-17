@@ -2,17 +2,41 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    $errors = [];
+    $dataForm = array_map('trim', $_POST);
+    foreach ($dataForm as $inputName => $inputValue) {
+        if (empty($dataForm[$inputName])) {
+            $errors[] = 'Le champ ' . $inputName . ' ne doit pas être vide.';
+        }
+    }
+
     if ($_FILES['avatar']['tmp_name'] !== '') {
-        $extensionsAuthorized = ['jpg', 'jpeg', 'png', 'webp'];
-        $extension = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
+        $dataFile = $_FILES;
+        $extensionsAuthorized = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        $extension = pathinfo($dataFile['avatar']['name'], PATHINFO_EXTENSION);
         $maxFileSize = 1000000;
 
-        $uploadDir = 'public/uploads/';
+        $uploadDir = 'uploads/';
 
-        $uploadFile = $uploadDir . uniqid() . '_' . basename($_FILES['avatar']['name']);
+        $uploadFile = $uploadDir . uniqid() . '_' . basename($dataFile['avatar']['name']);
 
-        var_dump($_FILES, $uploadFile);
+        if (!in_array($extension, $extensionsAuthorized)) {
+            $errors[] = 'Veuillez sélectionner une image de type Jpg/Jpeg/Png/webp/gif !';
+        }
+
+        if (file_exists($dataFile['avatar']['tmp_name']) && filesize($dataFile['avatar']['tmp_name']) > $maxFileSize) {
+            $errors[] = "Votre fichier doit faire moins de 1M !";
+        }
     }
+
+    if (empty($errors)) {
+        move_uploaded_file($dataFile['avatar']['tmp_name'], $uploadFile);
+        header("location: /?lastname={$dataForm['lastname']}&firstname={$dataForm['firstname']}&adress={$dataForm['adress']}&sex={$dataForm['sex']}&hair={$dataForm['hair']}&picture={$uploadFile}");
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lastname'])) {
+    $formValues = $_GET;
 }
 
 ?>
@@ -29,15 +53,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <div class="container d-flex justify-content-center">
-        <div class="col-6">
-            <?php if (!isset($user)) : ?>
-                <div class="card-user col-12 col-sm-10 offset-sm-1 col-lg-8 offset-lg-2">
-                    <div class="card-picture-user" class="col-12"><img src="/assets/images/klipartz.com.png" alt=""></div>
-                    <div class="card-header-user">sssss</div>
-                    <div class="card-body-user">ssssss</div>
+    <div class="container d-flex justify-content-center mt-5">
+        <div class="col-12 col-sm-10 col-md-6">
+            <div class="card-user col-12 col-lg-10 offset-lg-1 col-xl-8 offset-lg-2">
+                <?php if (isset($formValues['picture'])) : ?>
+                    <div class="card-picture-user" class="col-12"><img src="<?= $formValues['picture'] ?? '' ?>" alt=""></div>
+                <?php endif ?>
+                <div class="card-header-user">
+                    <h1>TAXICAB<br>LICENSE</h1>
                 </div>
-            <?php endif ?>
+                <div class="card-body-user">
+                    <?php if (isset($_GET['lastname'])) : ?>
+                        <p><?= htmlentities($_GET['lastname']) . ' ' .  htmlentities($_GET['firstname']) ?></p>
+                        <p><?= htmlentities($_GET['adress']) ?></p>
+                        <p>SEX: <?= htmlentities($_GET['sex']) ?></p>
+                        <p>HAIR: <?= htmlentities($_GET['hair']) ?></p>
+                    <?php endif ?>
+                </div>
+            </div>
+            <div class="mt-5">
+                <?php if (!empty($errors)) : ?>
+                    <ul>
+                        <?php foreach ($errors as $error) : ?>
+                            <li><?= $error ?></li>
+                        <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
             <form action="" method="post" enctype="multipart/form-data" class="mt-5">
                 <div class="mb-3">
                     <label for="lastname" class="form-label">Lastname</label>
