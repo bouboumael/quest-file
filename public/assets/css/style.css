@@ -1,0 +1,56 @@
+.card-user{
+    --border: 1px solid black;
+    --radius: 20px;
+    --spacing: 20px;
+    --full-width: 100%;
+    --full-height: 100%;
+    --height-card-header: 30%;
+    --height-card-body: calc(var(--full-height) - var(--height-card-header));
+    border: var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 200px;
+}
+
+.card-picture-user{
+    --width-picture: 130px;
+    --position: 10%;
+    display: flex;
+    justify-content: center;
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing);
+    position: absolute;
+    width: var(--width-picture);
+    top: var(--position);
+    left: var(--position);
+}
+
+.card-picture-user img{
+    width: calc(var(--width-picture) - 80%);
+}
+
+.card-header-user{
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: var(--border);
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    padding-right: var(--spacing);
+    width: var(--full-width);
+    background-color: #ffad4f;
+    height: var(--height-card-header);
+}
+
+.card-body-user{
+    display: flex;
+    justify-content: flex-end;
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    padding-right: var(--spacing);
+    width: var(--full-width);
+    background-color: #b1d2bb;
+    height: var(--height-card-body);
+}
