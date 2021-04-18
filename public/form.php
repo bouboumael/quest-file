@@ -39,6 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lastname'])) {
     $formValues = $_GET;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['file'])) {
+    unlink($_GET['file']);
+    header('location: /');
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,6 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lastname'])) {
                         <p>HAIR: <?= htmlentities($_GET['hair']) ?></p>
                     <?php endif ?>
                 </div>
+            </div>
+            <div class="row">
+                <a class="btn btn-danger col-12 col-lg-8 offset-lg-2 col-xl-6 offset-lg-3 mt-3" href="
+                <?php if (isset($formValues['picture'])) : ?>
+                    <?= '/index.php?file=' . $formValues['picture'] ?>
+                <?php else : ?>
+                    /
+                <?php endif ?>
+                "> Delete file</a>
             </div>
             <div class="mt-5">
                 <?php if (!empty($errors)) : ?>
